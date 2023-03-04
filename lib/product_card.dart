@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final String sArticleName;
   final String sSeller;
   final double score;
   final String uImage;
-
   const ProductCard(this.sArticleName, this.sSeller, this.score, this.uImage,
       {super.key});
+
+  @override
+  State<ProductCard> createState() => _ProductCard();
+}
+
+class _ProductCard extends State<ProductCard> {
+  bool _isFav = false;
+  void _statusFavorite() {
+    setState(() {
+      if (_isFav) {
+        _isFav = false;
+      } else {
+        _isFav = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +44,7 @@ class ProductCard extends StatelessWidget {
       child: Row(
         children: [
           Image(
-            image: NetworkImage(uImage),
+            image: NetworkImage(widget.uImage),
             width: 100,
           ),
           const SizedBox(
@@ -41,31 +56,34 @@ class ProductCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                sArticleName,
+                widget.sArticleName,
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               Text(
-                "Vendedor: $sSeller",
-                style: const TextStyle(fontSize: 18),
+                "Vendedor: ${widget.sSeller}",
+                style: const TextStyle(fontSize: 16),
                 overflow: TextOverflow.clip,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Calificación: $score",
-                    style: const TextStyle(fontSize: 18),
+                    "Calificación: ${widget.score}",
+                    style: const TextStyle(fontSize: 16),
                   ),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: IconButton(
                       iconSize: 30,
-                      icon: const Icon(
-                        Icons.star_border_outlined,
-                      ),
+                      icon: (_isFav
+                          ? const Icon(
+                              Icons.star,
+                            )
+                          : const Icon(Icons.star_border)),
+                      color: Colors.amberAccent,
                       onPressed: () {
-                        print("object");
+                        _statusFavorite();
                       },
                     ),
                   ),
