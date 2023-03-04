@@ -14,6 +14,7 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCard extends State<ProductCard> {
   bool _isFav = false;
+  // function to change state of star
   void _statusFavorite() {
     setState(() {
       if (_isFav) {

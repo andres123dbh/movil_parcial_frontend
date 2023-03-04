@@ -20,6 +20,7 @@ class _ProductsApp extends State<ProductsApp> {
               title: const Text('Products App'),
               backgroundColor: Colors.lightBlue,
             ),
+            // TODO: This elevated button is just temporary
             body: ElevatedButton(
                 onPressed: () => Get.to(const ProductList()),
                 child: Text("Go to ListProducts"))));

@@ -15,6 +15,7 @@ class ProductList extends StatefulWidget {
 class _ProductList extends State<ProductList> {
   Map data = {};
   List productsData = [];
+  // TODO put real request from database - delete this when is ready
   String sUrl = "https://api.npoint.io/d9b1898b87db7dc7a8f2";
 
   Future getProducts() async {
@@ -44,6 +45,7 @@ class _ProductList extends State<ProductList> {
             appBar: AppBar(
               title: const Text('Products List'),
             ),
+            // TODO make change of status between 2 type of views - delete this when is ready
             body: Column(
               children: [
                 const Padding(
