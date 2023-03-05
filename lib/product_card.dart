@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
+import 'package:movil_parcial_frontend/product.dart';
+import 'package:provider/provider.dart';
+import 'favs_database.dart';
 
 class ProductCard extends StatefulWidget {
+  final int index;
   final String sArticleName;
   final String sSeller;
   final double score;
   final String uImage;
-  const ProductCard(this.sArticleName, this.sSeller, this.score, this.uImage,
+  bool favoriteFlag;
+
+  ProductCard(this.index, this.sArticleName, this.sSeller, this.score,
+      this.uImage, this.favoriteFlag,
       {super.key});
 
   @override
@@ -13,20 +21,44 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCard extends State<ProductCard> {
-  bool _isFav = false;
+  // function to call sqlite to add the article to favs
+  // todo unique index
+  Future<void> addToFav(index, sArticleName, sSeller, score, uImage) async {
+    final item = Product(
+      id: index,
+      title: sArticleName,
+      seller: sSeller,
+      rating: score,
+      img: uImage,
+    );
+
+    await FavoritesDatabase.instance.addFavorites(item);
+  }
+
+  Future<void> deleteToFav(indexItem) async {
+    await FavoritesDatabase.instance.deleteFavorites(indexItem);
+  }
+
   // function to change state of star
   void _statusFavorite() {
     setState(() {
-      if (_isFav) {
-        _isFav = false;
+      if (widget.favoriteFlag) {
+        widget.favoriteFlag = false;
+        deleteToFav(widget.index);
       } else {
-        _isFav = true;
+        widget.favoriteFlag = true;
+        addToFav(widget.index, widget.sArticleName, widget.sSeller,
+            widget.score, widget.uImage);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // todo
+    /* var changesFavorites =
+        Provider.of<ChangesInFavorites>(context, listen: false)
+            .rebuildFavorites(); */
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.all(5),
@@ -77,13 +109,14 @@ class _ProductCard extends State<ProductCard> {
                     alignment: Alignment.bottomRight,
                     child: IconButton(
                       iconSize: 30,
-                      icon: (_isFav
+                      icon: (widget.favoriteFlag
                           ? const Icon(
                               Icons.star,
                             )
                           : const Icon(Icons.star_border)),
                       color: Colors.amberAccent,
                       onPressed: () {
+                        // todo
                         _statusFavorite();
                       },
                     ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'product_card.dart';
+import 'package:provider/provider.dart';
+import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
 
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
@@ -67,11 +69,13 @@ class _ProductList extends State<ProductList> {
                             itemCount: productsData.length,
                             itemBuilder: (BuildContext context, int index) {
                               return ProductCard(
+                                  index,
                                   "${productsData[index]['title']}",
                                   "${productsData[index]['seller']}",
                                   double.parse(
                                       "${productsData[index]['rating']}"),
-                                  "${productsData[index]['image']}");
+                                  "${productsData[index]['image']}",
+                                  false);
                             })))
               ],
             )));
