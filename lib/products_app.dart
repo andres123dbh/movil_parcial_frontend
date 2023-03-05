@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:movil_parcial_frontend/favorites_list.dart';
 import 'package:movil_parcial_frontend/list_products.dart';
-
-class ProductsApp extends StatefulWidget {
-  const ProductsApp({super.key});
-
-  @override
-  State<StatefulWidget> createState() {
-    return _ProductsApp();
-  }
-}
-
-class _ProductsApp extends State<ProductsApp> {
+/* import 'package:provider/provider.dart';
+import 'favorites_changes_notification.dart'; */
+//TODO delete all prints when all is ready
+class ProductsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,9 +14,16 @@ class _ProductsApp extends State<ProductsApp> {
               title: const Text('Products App'),
               backgroundColor: Colors.lightBlue,
             ),
-            // TODO: This elevated button is just temporary
-            body: ElevatedButton(
-                onPressed: () => Get.to(const ProductList()),
-                child: Text("Go to ListProducts"))));
+            // TODO: This elevated buttonS are just temporary
+            body: Column(
+              children: [
+                ElevatedButton(
+                    onPressed: () => Get.to(const ProductList()),
+                    child: Text("Go to ListProducts")),
+                ElevatedButton(
+                    onPressed: () => Get.to(const FavoritesList()),
+                    child: Text("Go to FavProducts"))
+              ],
+            )));
   }
 }

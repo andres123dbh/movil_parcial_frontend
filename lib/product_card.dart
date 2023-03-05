@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+//import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
+import 'package:movil_parcial_frontend/product.dart';
+//import 'package:provider/provider.dart';
+import 'favs_database.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ProductCard extends StatefulWidget {
+  final String index;
   final String sArticleName;
   final String sSeller;
   final double score;
   final String uImage;
-  const ProductCard(this.sArticleName, this.sSeller, this.score, this.uImage,
+  bool favoriteFlag;
+
+  ProductCard(this.index, this.sArticleName, this.sSeller, this.score,
+      this.uImage, this.favoriteFlag,
       {super.key});
 
   @override
@@ -13,20 +23,59 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCard extends State<ProductCard> {
-  bool _isFav = false;
+  // function to call sqlite to add the article to favs
+  // todo unique index
+  Future<void> addToFav(index, sArticleName, sSeller, score, uImage) async {
+    final item = Product(
+      id: index,
+      title: sArticleName,
+      seller: sSeller,
+      rating: score,
+      img: uImage,
+    );
+
+    await FavoritesDatabase.instance.addFavorites(item);
+  }
+
+  // call instance of database todo delete
+  Future<void> deleteToFav(indexItem) async {
+    await FavoritesDatabase.instance.deleteFavorites(indexItem);
+  }
+
+  // this send to the back a list of current favs
+  updateFavorites() async {
+    var favorites = await FavoritesDatabase.instance.getFavorites();
+    await http.post(Uri.parse('http://10.0.2.2:8080/user/favorites'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'favorites': favorites,
+        }));
+  }
+
   // function to change state of star
   void _statusFavorite() {
     setState(() {
-      if (_isFav) {
-        _isFav = false;
+      if (widget.favoriteFlag) {
+        widget.favoriteFlag = false;
+        deleteToFav(widget.index);
+        updateFavorites();
       } else {
-        _isFav = true;
+        widget.favoriteFlag = true;
+        addToFav(widget.index, widget.sArticleName, widget.sSeller,
+            widget.score, widget.uImage);
+        updateFavorites();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // todo
+    /* var changesFavorites =
+        Provider.of<ChangesInFavorites>(context, listen: false)
+            .rebuildFavorites(); */
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.all(5),
@@ -77,13 +126,14 @@ class _ProductCard extends State<ProductCard> {
                     alignment: Alignment.bottomRight,
                     child: IconButton(
                       iconSize: 30,
-                      icon: (_isFav
+                      icon: (widget.favoriteFlag
                           ? const Icon(
                               Icons.star,
                             )
                           : const Icon(Icons.star_border)),
                       color: Colors.amberAccent,
                       onPressed: () {
+                        // todo
                         _statusFavorite();
                       },
                     ),
