@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
+//import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
 import 'package:movil_parcial_frontend/product.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 import 'favs_database.dart';
 
 class ProductCard extends StatefulWidget {
-  final int index;
+  final String index;
   final String sArticleName;
   final String sSeller;
   final double score;

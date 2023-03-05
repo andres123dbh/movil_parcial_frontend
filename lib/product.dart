@@ -1,5 +1,5 @@
 class Product {
-  late final int id;
+  late final String id;
   late final String title;
   late final String seller;
   late final double rating;

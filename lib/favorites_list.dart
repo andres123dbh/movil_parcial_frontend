@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
+//import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
 import 'package:movil_parcial_frontend/favs_database.dart';
-import 'package:provider/provider.dart';
-import 'dart:convert';
+//import 'package:provider/provider.dart';
 import 'product_card.dart';
 
 class FavoritesList extends StatefulWidget {
@@ -29,7 +27,7 @@ class _FavoritesList extends State<FavoritesList> {
           itemCount: productsData.length,
           itemBuilder: (BuildContext context, int index) {
             return ProductCard(
-                index,
+                "${productsData[index]['id']}",
                 "${productsData[index]['title']}",
                 "${productsData[index]['seller']}",
                 double.parse("${productsData[index]['rating']}"),

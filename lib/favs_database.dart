@@ -26,7 +26,7 @@ class FavoritesDatabase {
       onCreate: (db, version) {
         return db.execute(
           '''CREATE TABLE favorites(
-            id INTEGER PRIMARY KEY, 
+            id TEXT PRIMARY KEY, 
             title TEXT,
             seller TEXT, 
             rating DOUBLE,
@@ -54,7 +54,7 @@ class FavoritesDatabase {
   }
 
   //todo index
-  Future<void> deleteFavorites(int idItem) async {
+  Future<void> deleteFavorites(String idItem) async {
     try {
       final db = await instance.database;
       await db.delete('favorites', where: "id = ?", whereArgs: [idItem]);
