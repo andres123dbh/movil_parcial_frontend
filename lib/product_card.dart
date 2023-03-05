@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:movil_parcial_frontend/product.dart';
 //import 'package:provider/provider.dart';
 import 'favs_database.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ProductCard extends StatefulWidget {
   final String index;
@@ -35,8 +37,21 @@ class _ProductCard extends State<ProductCard> {
     await FavoritesDatabase.instance.addFavorites(item);
   }
 
+  // call instance of database todo delete
   Future<void> deleteToFav(indexItem) async {
     await FavoritesDatabase.instance.deleteFavorites(indexItem);
+  }
+
+  // this send to the back a list of current favs
+  updateFavorites() async {
+    var favorites = await FavoritesDatabase.instance.getFavorites();
+    await http.post(Uri.parse('http://10.0.2.2:8080/user/favorites'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'favorites': favorites,
+        }));
   }
 
   // function to change state of star
@@ -45,10 +60,12 @@ class _ProductCard extends State<ProductCard> {
       if (widget.favoriteFlag) {
         widget.favoriteFlag = false;
         deleteToFav(widget.index);
+        updateFavorites();
       } else {
         widget.favoriteFlag = true;
         addToFav(widget.index, widget.sArticleName, widget.sSeller,
             widget.score, widget.uImage);
+        updateFavorites();
       }
     });
   }

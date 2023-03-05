@@ -69,7 +69,6 @@ class FavoritesDatabase {
     try {
       final db = await instance.database;
       final List<Map<String, dynamic>> result = await db.query('favorites');
-      print(result);
       return result;
     } catch (e) {
       print(e);

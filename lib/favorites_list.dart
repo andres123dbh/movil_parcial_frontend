@@ -19,9 +19,10 @@ class _FavoritesList extends State<FavoritesList> {
 
   late Widget list = Container();
   //todo
+  //function to refresh favorite view if a product is deleted
   Future testing() async {
-    var x = await FavoritesDatabase.instance.getFavorites();
-    productsData = x;
+    var favorites = await FavoritesDatabase.instance.getFavorites();
+    productsData = favorites;
     setState(() {
       list = ListView.builder(
           itemCount: productsData.length,
