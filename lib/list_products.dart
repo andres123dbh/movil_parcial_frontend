@@ -91,7 +91,7 @@ class _ProductList extends State<ProductList> {
           return Error();
         }
     } else {
-      runApp(const GetMaterialApp(title: '', home: Login()));
+      Get.to(() => const Login());
     }
     
   }

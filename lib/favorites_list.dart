@@ -52,7 +52,7 @@ class _FavoritesList extends State<FavoritesList> {
           Get.to(() => const Login());
         }
     } else {
-      runApp(const GetMaterialApp(title: '', home: Login()));
+      Get.to(() => const Login());
     }
     
   }

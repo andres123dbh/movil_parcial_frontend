@@ -81,7 +81,7 @@ class _FavoriteProductListGrid extends State<FavoriteProductListGrid> {
           return Error();
         }
     } else {
-      runApp(const GetMaterialApp(title: '', home: Login()));
+      Get.to(() => const Login());
     }
     
   }

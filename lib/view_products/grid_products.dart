@@ -90,7 +90,7 @@ class _ProductListGrid extends State<ProductListGrid> {
           return Error();
         }
     } else {
-      runApp(const GetMaterialApp(title: '', home: Login()));
+      Get.to(() => const Login());
     }
     
   }
