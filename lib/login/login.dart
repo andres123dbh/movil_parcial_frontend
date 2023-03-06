@@ -48,6 +48,7 @@ class _DashboardState extends State<Dashboard> {
       var loginArr = json.decode(response.body);
       prefs.setString('accessToken', loginArr['accessToken']);
       String token = prefs.getString("accessToken").toString();
+      // updates favorites of sqlite from real backend
       var favs = await http.get(
           Uri.parse('http://10.0.2.2:8080/user/favorites'),
           headers: <String, String>{
@@ -56,14 +57,13 @@ class _DashboardState extends State<Dashboard> {
           });
       data = jsonDecode(favs.body);
       productsData = data['products'];
-      for (var element in productsData) {
-        print(element);
+      for (var product in productsData) {
         final item = Product(
-          id: element["_id"],
-          title: element["title"],
-          seller: element["seller"],
-          rating: element["rating"],
-          img: element["image"],
+          id: product["_id"],
+          title: product["title"],
+          seller: product["seller"],
+          rating: product["rating"],
+          img: product["image"],
         );
         FavoritesDatabase.instance.addFavorites(item);
       }
