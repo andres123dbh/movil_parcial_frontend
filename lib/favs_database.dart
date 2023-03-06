@@ -65,6 +65,17 @@ class FavoritesDatabase {
     }
   }
 
+  Future<void> deleteAll() async {
+    try {
+      final db = await instance.database;
+      await db.execute('DELETE FROM favorites');
+      return;
+    } catch (e) {
+      print(e);
+      throw Error();
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getFavorites() async {
     try {
       final db = await instance.database;
