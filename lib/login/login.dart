@@ -56,16 +56,18 @@ class _DashboardState extends State<Dashboard> {
             "accessToken": token
           });
       data = jsonDecode(favs.body);
-      productsData = data['products'];
-      for (var product in productsData) {
-        final item = Product(
-          id: product["_id"],
-          title: product["title"],
-          seller: product["seller"],
-          rating: product["rating"],
-          img: product["image"],
-        );
-        FavoritesDatabase.instance.addFavorites(item);
+      if (data['products'] != null) {
+        productsData = data['products'];
+        for (var product in productsData) {
+          final item = Product(
+            id: product["_id"],
+            title: product["title"],
+            seller: product["seller"],
+            rating: product["rating"],
+            img: product["image"],
+          );
+          FavoritesDatabase.instance.addFavorites(item);
+        }
       }
       Get.to(() => const ProductsApp());
     }
