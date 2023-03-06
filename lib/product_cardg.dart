@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:movil_parcial_frontend/product.dart';
+import 'favs_database.dart';
 
 class ProductCardAlt extends StatefulWidget {
+  final String index;
   final String sArticleName;
   final String sSeller;
   final double score;
   final String uImage;
-  const ProductCardAlt(this.sArticleName, this.sSeller, this.score, this.uImage,
+  bool favoriteFlag;
+  ProductCardAlt(this.index, this.sArticleName, this.sSeller, this.score,
+      this.uImage, this.favoriteFlag,
       {super.key});
 
   @override
@@ -13,14 +22,47 @@ class ProductCardAlt extends StatefulWidget {
 }
 
 class _ProductCardAlt extends State<ProductCardAlt> {
-  bool _isFav = false;
+  Future<void> addToFav(index, sArticleName, sSeller, score, uImage) async {
+    final item = Product(
+      id: index,
+      title: sArticleName,
+      seller: sSeller,
+      rating: score,
+      img: uImage,
+    );
+
+    await FavoritesDatabase.instance.addFavorites(item);
+  }
+
+  // call instance of database todo delete
+  Future<void> deleteToFav(indexItem) async {
+    await FavoritesDatabase.instance.deleteFavorites(indexItem);
+  }
+
+  // this send to the back a list of current favs
+  updateFavorites() async {
+    var favorites = await FavoritesDatabase.instance.getFavorites();
+    await http.post(Uri.parse('http://10.0.2.2:8080/user/favorites'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'favorites': favorites,
+        }));
+  }
+
   // function to change state of star
   void _statusFavorite() {
     setState(() {
-      if (_isFav) {
-        _isFav = false;
+      if (widget.favoriteFlag) {
+        widget.favoriteFlag = false;
+        deleteToFav(widget.index);
+        updateFavorites();
       } else {
-        _isFav = true;
+        widget.favoriteFlag = true;
+        addToFav(widget.index, widget.sArticleName, widget.sSeller,
+            widget.score, widget.uImage);
+        updateFavorites();
       }
     });
   }
@@ -30,7 +72,8 @@ class _ProductCardAlt extends State<ProductCardAlt> {
     return Container(
       padding: const EdgeInsets.all(4),
       margin: const EdgeInsets.all(3),
-      width: 196,
+      width: MediaQuery.of(context).size.width*0.45,
+      height: 215,
       decoration: BoxDecoration(
         color: Colors.lightBlue,
         border: Border.all(color: Colors.lightBlue),
@@ -48,16 +91,17 @@ class _ProductCardAlt extends State<ProductCardAlt> {
           Image(
             image: NetworkImage(widget.uImage),
             fit: BoxFit.fitWidth,
+            height: 100,
           ),
           const SizedBox(
             height: 3,
           ),
           // to help wrapping the text of overflows
-          Text(
-            widget.sArticleName,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          AutoSizeText(
+              widget.sArticleName,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              maxLines: 2,
           ),
-
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -76,17 +120,17 @@ class _ProductCardAlt extends State<ProductCardAlt> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: IconButton(
-                  padding: const EdgeInsets.all(0),
-                  iconSize: 30,
-                  icon: (_isFav
-                      ? const Icon(
-                          Icons.star,
-                        )
-                      : const Icon(Icons.star_border)),
-                  color: Colors.amberAccent,
-                  onPressed: () {
-                    _statusFavorite();
-                  },
+                      iconSize: 30,
+                      icon: (widget.favoriteFlag
+                          ? const Icon(
+                              Icons.star,
+                            )
+                          : const Icon(Icons.star_border)),
+                      color: Colors.amberAccent,
+                      onPressed: () {
+                        // todo
+                        _statusFavorite();
+                      },
                 ),
               ),
             ],

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-//import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
+import 'package:get/get.dart';
 import 'package:movil_parcial_frontend/favs_database.dart';
-//import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 import 'product_card.dart';
+import './products_app.dart';
+import './view_products/grid_favorite_products.dart';
+import './login/login.dart';
 
 class FavoritesList extends StatefulWidget {
   const FavoritesList({super.key});
@@ -18,9 +23,7 @@ class _FavoritesList extends State<FavoritesList> {
   List productsData = [];
 
   late Widget list = Container();
-  //todo
-  //function to refresh favorite view if a product is deleted
-  Future testing() async {
+  Future setFavorites() async {
     var favorites = await FavoritesDatabase.instance.getFavorites();
     productsData = favorites;
     setState(() {
@@ -38,57 +41,71 @@ class _FavoritesList extends State<FavoritesList> {
     });
   }
 
-  //todo
-  /* getFavoritesLocal() async {
-    var x = await FavoritesDatabase.instance.getFavorites();
-    setState(() {
-      productsData = x;
-    });
-  } */
+  Future checkLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    const url = 'http://10.0.2.2:8080/products/get';
+
+    String? token = prefs.getString("accessToken");  
+    if (token != null) {
+        http.Response response = await http.get(Uri.parse(url),headers: {"accessToken": token});
+        if (response.statusCode != 200) {
+          Get.to(() => const Login());
+        }
+    } else {
+      runApp(const GetMaterialApp(title: '', home: Login()));
+    }
+    
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //getFavoritesLocal();
+    setFavorites();
+    checkLogin();
   }
 
   @override
   Widget build(BuildContext context) {
-    testing();
-    //getFavoritesLocal();
-    /* var changesFavorites =
-        Provider.of<ChangesInFavorites>(context, listen: false)
-            .rebuildFavorites(); */
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
               title: const Text('Favorite List'),
             ),
-            // TODO make change of status between 2 type of views - delete this when is ready
             body: productsData.isEmpty
                 ? const Center(
                     child: Text("You don't have favorites"),
                   )
                 : Column(
                     children: [
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Icon(
-                            Icons.change_circle,
-                            size: 40,
-                            color: Colors.pinkAccent,
-                          ),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
+                        child: Row(
+                          children: [
+                            SizedBox(width: MediaQuery.of(context).size.width*0.05),
+                            ElevatedButton(
+                              onPressed: () => Get.to(() => const ProductsApp()),
+                              child: const Text("Menu")),
+                            SizedBox(width: MediaQuery.of(context).size.width*0.6),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.change_circle,
+                                  size: 40,
+                                  color: Colors.pinkAccent, 
+                                ),
+                                onPressed: () {
+                                  Get.to(() => const FavoriteProductListGrid());
+                                },
+                              ),
+                            ),
+                          ],
+                        )
                       ),
                       Expanded(
                           child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 5, vertical: 0),
-                              //todo
                               child: list))
                     ],
                   )));
