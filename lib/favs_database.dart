@@ -48,7 +48,6 @@ class FavoritesDatabase {
           conflictAlgorithm: ConflictAlgorithm.ignore);
       return;
     } catch (e) {
-      print(e);
       throw Error();
     }
   }
@@ -60,7 +59,16 @@ class FavoritesDatabase {
       await db.delete('favorites', where: "id = ?", whereArgs: [idItem]);
       return;
     } catch (e) {
-      print(e);
+      throw Error();
+    }
+  }
+
+  Future<void> deleteAll() async {
+    try {
+      final db = await instance.database;
+      await db.execute('DELETE FROM favorites');
+      return;
+    } catch (e) {
       throw Error();
     }
   }
@@ -71,7 +79,6 @@ class FavoritesDatabase {
       final List<Map<String, dynamic>> result = await db.query('favorites');
       return result;
     } catch (e) {
-      print(e);
       throw Error();
     }
   }

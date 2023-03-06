@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movil_parcial_frontend/product.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'favs_database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -43,10 +44,14 @@ class _ProductCard extends State<ProductCard> {
 
   // this send to the back a list of current favs
   updateFavorites() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     var favorites = await FavoritesDatabase.instance.getFavorites();
+    String token = prefs.getString("accessToken").toString();
+    // todo
     await http.post(Uri.parse('http://10.0.2.2:8080/user/favorites'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          "accessToken": token
         },
         body: jsonEncode(<String, dynamic>{
           'favorites': favorites,
@@ -107,9 +112,10 @@ class _ProductCard extends State<ProductCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AutoSizeText(
-                  widget.sArticleName,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  maxLines: 2,
+                widget.sArticleName,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                maxLines: 2,
               ),
               Text(
                 "Vendedor: ${widget.sSeller}",
