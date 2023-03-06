@@ -6,23 +6,24 @@ import 'dart:convert';
 import 'package:movil_parcial_frontend/favs_database.dart';
 
 
-import 'product_card.dart';
-import './login/login.dart';
-import './view_products/grid_products.dart';
-import './products_app.dart';
+import '../product_cardg.dart';
+import '../login/login.dart';
+import '../list_products.dart';
+import '../products_app.dart';
+//import 'package:provider/provider.dart';
+//import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
 
-class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+class ProductListGrid extends StatefulWidget {
+  const ProductListGrid({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _ProductList();
+    return _ProductListGrid();
   }
 }
 
-class _ProductList extends State<ProductList> {
+class _ProductListGrid extends State<ProductListGrid> {
   Map data = {};
-  List productsData = [];
 
   late List<dynamic> productList;
   late Widget listView = Container();
@@ -36,7 +37,6 @@ class _ProductList extends State<ProductList> {
         favorite.add(element['id']);
       }
   }
-  
 
   Future getProducts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -49,37 +49,36 @@ class _ProductList extends State<ProductList> {
           if (response.statusCode == 200) {
             data = jsonDecode(response.body);
             productList = data['products'];
-            List <ProductCard> elementList = <ProductCard>[];
+            List <Widget> rowGrid = <Widget>[];
             for (var i = 0; i < productList.length; i++) {
-              if(favorite.contains(productList[i]['_id'])){
-                elementList.add(ProductCard(
-                  "${productList[i]['_id']}",
-                  "${productList[i]['title']}",
-                  "${productList[i]['seller']}",
-                  double.parse(
-                      "${productList[i]['rating']}"),
-                  "${productList[i]['image']}",
-                  true));
-              }else{
-                elementList.add(ProductCard(
-                  "${productList[i]['_id']}",
-                  "${productList[i]['title']}",
-                  "${productList[i]['seller']}",
-                  double.parse(
-                      "${productList[i]['rating']}"),
-                  "${productList[i]['image']}",
-                  false));
+              if (i.isEven) {
+                rowGrid.add(Row(children: [
+                              if(favorite.contains(productList[i]['_id']))...[
+                                ProductCardAlt("${productList[i]['_id']}","${productList[i]['title']}","${productList[i]['seller']}",
+                                double.parse("${productList[i]['rating']}"),"${productList[i]['image']}",true)
+                              ]else...[
+                                ProductCardAlt("${productList[i]['_id']}","${productList[i]['title']}","${productList[i]['seller']}",
+                                double.parse("${productList[i]['rating']}"),"${productList[i]['image']}",false)
+                              ],
+                              if(favorite.contains(productList[i + 1]['_id']))...[
+                                ProductCardAlt("${productList[i + 1]['_id']}","${productList[i + 1]['title']}","${productList[i + 1]['seller']}",
+                                double.parse("${productList[i + 1]['rating']}"),"${productList[i + 1]['image']}",true)
+                              ]else...[
+                                ProductCardAlt("${productList[i + 1]['_id']}","${productList[i + 1]['title']}","${productList[i + 1]['seller']}",
+                                double.parse("${productList[i + 1]['rating']}"),"${productList[i + 1]['image']}",false)
+                              ],
+                            ],)
+                            );
               }
-              
             }
             setState(() {
               listView = ListView.separated(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(8),
-                  itemCount: elementList.length,
+                  itemCount: rowGrid.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return elementList[index];
+                    return rowGrid[index];
                   },
                   separatorBuilder: (BuildContext context, int index) => const Divider(),
                 );
@@ -130,7 +129,7 @@ class _ProductList extends State<ProductList> {
                             color: Colors.pinkAccent, 
                           ),
                           onPressed: () {
-                            Get.to(() => const ProductListGrid());
+                            Get.to(() => const ProductList());
                           },
                         ),
                       ),

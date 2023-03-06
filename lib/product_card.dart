@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'package:movil_parcial_frontend/favorites_changes_notification.dart';
 import 'package:movil_parcial_frontend/product.dart';
-//import 'package:provider/provider.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'favs_database.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -79,6 +78,7 @@ class _ProductCard extends State<ProductCard> {
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.all(5),
+      height: 140,
       decoration: BoxDecoration(
         color: Colors.lightBlue,
         border: Border.all(color: Colors.lightBlue),
@@ -96,6 +96,7 @@ class _ProductCard extends State<ProductCard> {
           Image(
             image: NetworkImage(widget.uImage),
             width: 100,
+            height: 100,
           ),
           const SizedBox(
             width: 3,
@@ -105,10 +106,10 @@ class _ProductCard extends State<ProductCard> {
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.sArticleName,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              AutoSizeText(
+                  widget.sArticleName,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  maxLines: 2,
               ),
               Text(
                 "Vendedor: ${widget.sSeller}",
@@ -133,7 +134,6 @@ class _ProductCard extends State<ProductCard> {
                           : const Icon(Icons.star_border)),
                       color: Colors.amberAccent,
                       onPressed: () {
-                        // todo
                         _statusFavorite();
                       },
                     ),
